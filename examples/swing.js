@@ -1,13 +1,17 @@
+defineClass(org.ringojs.wrappers.EventAdapter);
 var {JFrame, JButton, ImageIcon, JLabel} = javax.swing;
-var {setInterval} = require('ringo/scheduler');
 var n = 0;
 
 function main() {
     var frame = new JFrame("Swing Demo");
     var button = new JButton(new ImageIcon(module.resolve("img/ringo-drums.png")));
-    button.addActionListener(function(e) {
+    var buttonEmitter = new EventAdapter([java.awt.event.ActionListener]);
+    button.addActionListener(buttonEmitter.impl);
+    buttonEmitter.addListener('actionPerformed', function(e) {
         setInterval(function() {
-            if (n++ > 200) system.exit();
+            if (n++ > 200) {
+               system.exit();
+            }
             frame.setLocation(200 + random(), 200 + random());
         }, 5);
     });
