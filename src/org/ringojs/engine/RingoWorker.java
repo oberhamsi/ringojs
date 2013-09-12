@@ -415,7 +415,7 @@ public final class RingoWorker {
     public void release() {
         engine.returnWorker(this);
     }
-    
+
     /**
      * Schedule a task that will release this worker when the current task
      * is finished, returning it back into the engine's worker pool.
@@ -475,6 +475,26 @@ public final class RingoWorker {
             // timed out a new thread will be created.
             setKeepAliveTime(60000, TimeUnit.MILLISECONDS);
             allowCoreThreadTimeOut(true);
+        }
+
+        /**
+         * Handle exceptions thrown in submitted callbacks
+         * @param runnable
+         * @param thrown
+         * @throws RuntimeException
+         */
+        protected void afterExecute(Runnable runnable, Throwable thrown)
+                throws RuntimeException {
+            super.afterExecute(runnable, thrown);
+            if (thrown == null && runnable instanceof Future<?>) {
+                try {
+                    Future<?> future = (Future<?>) runnable;
+                    if (future.isDone())
+                        future.get();
+                } catch (Exception x) {
+                    throw new RuntimeException(x);
+                }
+            }
         }
     }
 
