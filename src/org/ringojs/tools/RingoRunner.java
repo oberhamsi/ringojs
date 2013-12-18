@@ -32,8 +32,6 @@ import org.ringojs.util.StringUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
 
-import static java.lang.System.err;
-import static java.lang.System.out;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -170,7 +168,7 @@ public class RingoRunner {
             }
         } catch (Exception x) {
             List<ScriptError> errors = engine == null ? null : engine.getMainErrors();
-            reportError(x, err, errors, verbose);
+            reportError(x, this.config.getSystemErr(), errors, verbose);
             System.exit(-1);
         }
     }
@@ -191,7 +189,7 @@ public class RingoRunner {
         } catch (NoSuchMethodException nsm) {
             // daemon life-cycle method not implemented
         } catch (Exception x) {
-            reportError(x, err, engine.getMainErrors(), verbose);
+            reportError(x, this.config.getSystemErr(), engine.getMainErrors(), verbose);
             System.exit(-1);
         }
     }
@@ -203,7 +201,7 @@ public class RingoRunner {
             } catch (NoSuchMethodException nsm) {
                 // daemon life-cycle method not implemented
             } catch (Exception x) {
-                reportError(x, err, engine.getMainErrors(), verbose);
+                reportError(x, this.config.getSystemErr(), engine.getMainErrors(), verbose);
                 System.exit(-1);
             }
         }
@@ -217,7 +215,7 @@ public class RingoRunner {
             } catch (NoSuchMethodException nsm) {
                 // daemon life-cycle method not implemented
             } catch (Exception x) {
-                reportError(x, err, engine.getMainErrors(), verbose);
+                reportError(x, this.config.getSystemErr(), engine.getMainErrors(), verbose);
                 System.exit(-1);
             }
         }
@@ -230,7 +228,7 @@ public class RingoRunner {
             } catch (NoSuchMethodException nsm) {
                 // daemon life-cycle method not implemented
             } catch (Exception x) {
-                reportError(x, err, engine.getMainErrors(), verbose);
+                reportError(x, this.config.getSystemErr(), engine.getMainErrors(), verbose);
                 System.exit(-1);
             }
         }
@@ -397,8 +395,8 @@ public class RingoRunner {
     }
 
     private static void exitWithError(String message, int code) {
-        err.println(message);
-        err.println("Use -h or --help for a list of supported options.");
+        System.err.println(message);
+        System.err.println("Use -h or --help for a list of supported options.");
         System.exit(code);
     }
 
@@ -428,10 +426,10 @@ public class RingoRunner {
     }
 
     public static void printUsage() {
-        out.println("Usage:");
-        out.println("  ringo [option] ... [script] [arg] ...");
-        out.println("Options:");
-        Formatter formatter = new Formatter(out);
+        System.out.println("Usage:");
+        System.out.println("  ringo [option] ... [script] [arg] ...");
+        System.out.println("Options:");
+        Formatter formatter = new Formatter(System.out);
         for (String[] opt : options) {
             String format = opt[0].length() == 0 ? "   --%2$s %4$s" : "-%1$s --%2$s %4$s";
             String def = new Formatter().format(format, (Object[]) opt).toString();
@@ -440,8 +438,8 @@ public class RingoRunner {
     }
 
     public static void printVersion() {
-        out.print("RingoJS version ");
-        out.println(RhinoEngine.VERSION.get(0) + "." + RhinoEngine.VERSION.get(1));
+        System.out.print("RingoJS version ");
+        System.out.println(RhinoEngine.VERSION.get(0) + "." + RhinoEngine.VERSION.get(1));
     }
 
 }

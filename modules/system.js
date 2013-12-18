@@ -18,7 +18,8 @@ Object.defineProperty(exports, "stdin", {
     get: function() {
         if (!stdin) {
             var {Stream, TextStream} = require('io');
-            stdin = new TextStream(new Stream(System['in']));
+            var engine = org.ringojs.engine.RhinoEngine.getEngine(global);
+            stdin = new TextStream(new Stream(engine.getConfig().getSystemIn()));
         }
         return stdin;
     },
@@ -35,7 +36,8 @@ Object.defineProperty(exports, "stdout", {
     get: function() {
         if (!stdout) {
             var {Stream, TextStream} = require('io');
-            stdout = new TextStream(new Stream(System.out));
+            var engine = org.ringojs.engine.RhinoEngine.getEngine(global);
+            stdout = new TextStream(new Stream(engine.getConfig().getSystemOut()));
         }
         return stdout;
     },

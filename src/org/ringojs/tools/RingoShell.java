@@ -88,11 +88,12 @@ public class RingoShell {
             history = new File(System.getProperty("user.home"), ".ringo-history");
         }
         reader.setHistory(new History(history));
-        PrintStream out = System.out;
+        PrintStream out = this.config.getSystemOut();
+        PrintStream err = this.config.getSystemErr();
         int lineno = 0;
         repl: while (true) {
             Context cx = engine.getContextFactory().enterContext(null);
-            cx.setErrorReporter(new ToolErrorReporter(false, System.err));
+            cx.setErrorReporter(new ToolErrorReporter(false, err));
             String source = "";
             String prompt = getPrompt();
             while (true) {
@@ -123,7 +124,7 @@ public class RingoShell {
                     System.gc();
                 }
             } catch (Exception ex) {
-                // TODO: should this print to System.err?
+                // TODO: should this print to err?
                 printError(ex, out, config.isVerbose());
             } finally {
                 Context.exit();
@@ -167,9 +168,9 @@ public class RingoShell {
         int lineno = 0;
         outer: while (true) {
             Context cx = engine.getContextFactory().enterContext(null);
-            cx.setErrorReporter(new ToolErrorReporter(false, System.err));
+            cx.setErrorReporter(new ToolErrorReporter(false, this.config.getSystemErr()));
             String source = "";
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(this.config.getSystemIn()));
             while (true) {
                 String line = reader.readLine();
                 if (line == null) {
@@ -187,7 +188,7 @@ public class RingoShell {
                 worker.evaluateScript(cx, script, scope);
                 lineno++;
             } catch (Exception ex) {
-                RingoRunner.reportError(ex, System.err, worker.getErrors(),
+                RingoRunner.reportError(ex, this.config.getSystemErr(), worker.getErrors(),
                         config.isVerbose());
             } finally {
                 Context.exit();
@@ -251,7 +252,7 @@ public class RingoShell {
                     // set return value to beginning of word we're replacing
                     start = i - lastpart.length();
                     while (obj != null) {
-                        // System.err.println(word + " -- " + obj);
+                        // this.config.getSystemErr().println(word + " -- " + obj);
                         Object[] ids = obj.getIds();
                         collectIds(ids, obj, word, lastpart, list);
                         if (list.size() <= 3 && obj instanceof ScriptableObject) {

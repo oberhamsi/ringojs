@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -60,6 +61,9 @@ public class RingoConfig {
     private boolean policyEnabled = false;
     private boolean reloading = true;
     private String charset = "UTF-8";
+    private InputStream in;
+    private PrintStream out;
+    private PrintStream err;
 
     /**
      * Create a new Ringo configuration and sets up its module search path.
@@ -117,6 +121,10 @@ public class RingoConfig {
         if (parentProto != null) {
             parentProtoProperties = Integer.parseInt(parentProto) != 0;
         }
+
+        this.in = java.lang.System.in;
+        this.out = java.lang.System.out;
+        this.err = java.lang.System.err;
 
         if (userModules != null) {
             for (String pathElem : userModules) {
@@ -554,6 +562,30 @@ public class RingoConfig {
 
     private static Logger getLogger() {
         return Logger.getLogger(RingoConfig.class.getName());
+    }
+
+    public InputStream getSystemIn() {
+        return this.in;
+    }
+
+    public PrintStream getSystemErr() {
+        return this.err;
+    }
+
+    public PrintStream getSystemOut() {
+        return this.out;
+    }
+
+    public void setSystemIn(InputStream in) {
+        this.in = in;
+    }
+
+    public void setSystemErr(PrintStream err) {
+        this.err = err;
+    }
+
+    public void setSystemOut(PrintStream out) {
+        this.out = out;
     }
 
     private static Repository toZipRepository(URL url) throws IOException {
