@@ -54,7 +54,7 @@ Object.defineProperty(exports, "stderr", {
     get: function() {
         if (!stderr) {
             var {Stream, TextStream} = require('io');
-            stderr = new TextStream(new Stream(System.err));
+            stderr = new TextStream(new Stream(engine.getConfig().getSystemErr()));
         }
         return stderr;
     },
