@@ -262,6 +262,6 @@ function printError(xcept, errors, verbose) {
             xcept = xcept.getWrappedException();
         }
         term.writeln(term.BOLD, "Java Exception:")
-        xcept.printStackTrace(system.stdout.raw || System.out);
+        xcept.printStackTrace(system.stdout.raw);
     }
 }
