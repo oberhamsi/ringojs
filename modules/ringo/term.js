@@ -17,7 +17,7 @@
 
 var system = require('system');
 var {Stream, TextStream} = require('io');
-var {AnsiConsole} = org.fusesource.jansi;
+var {AnsiOutputStream} = org.fusesource.jansi;
 var System = java.lang.System;
 
 var env = system.env;
@@ -43,11 +43,9 @@ var enabled = (!javaConsole || javaConsole())
         && ((env.TERM && env.TERM in supportedTerminals) || jansiInstalled);
 
 if (jansiInstalled) {
-    // Jansi wraps System.out and System.err so we need to
-    // reset stdout and stderr in the system module
-    AnsiConsole.systemInstall();
-    system.stdout = new TextStream(new Stream(System.out));
-    system.stderr = new TextStream(new Stream(System.err));
+    system.stdout = new TextStream(new Stream(new AnsiOutputStream(system.stdout.raw)));
+    system.stderr = new TextStream(new Stream(new AnsiOutputStream(system.stderr.raw)));
+
 }
 
 exports.RESET =     "\u001B[0m";
